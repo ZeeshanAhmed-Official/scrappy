@@ -228,6 +228,8 @@ class ProductScraper:
 
 
 db = Database()
+db.createAuthTable()
+db.generateAuthKey()
 db.createScraperTable()
 # print(db.getProductDetails('ASH-EN-UNI-B712-46'))
 cat = CategoryScraper(PRODUCT_URL)
