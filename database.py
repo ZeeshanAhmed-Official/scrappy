@@ -23,26 +23,43 @@ class Database:
         self.con = sqlite3.connect(
             "scraper.db", detect_types=sqlite3.PARSE_DECLTYPES)
         self.cursor = self.con.cursor()
+    
+    def createAuthTable(self):
+        self.cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='auth' ''')
+        row = self.cursor.fetchone()
+        print("ROW IS ", row)
+        if row[0] == 1:
+            print("auth Table already exists")
+            self.cursor.execute(''' DELETE FROM auth ''')
+        else:
+            self.cursor.execute("""CREATE TABLE auth ( id INTEGER PRIMARY KEY AUTOINCREMENT, apikey VARCHAR(32), active INTEGER)""")
+            print("Successfully created auth table.")
+
 
     def createScraperTable(self):
         print("Creating Products Table")
-        self.cursor.execute("""CREATE TABLE products (
-            sku VARCHAR(254), 
-            title VARCHAR(254), 
-            price TEXT,
-            category_id VARCHAR(254),
-            category_title VARCHAR(254),
-            images TEXT,
-            description TEXT,
-            flag_status VARCHAR(254) DEFAULT 'N',
-            PRIMARY KEY (sku, category_id)
-            )""")
-        print("Successfully created products table.")
-    
-    def createAuthTable(self):
-        print("Creating Auth Table")
-        self.cursor.execute("""CREATE TABLE auth ( id INTEGER PRIMARY KEY AUTOINCREMENT, apikey VARCHAR(32), active INTEGER)""")
-        print("Successfully created auth table.")
+
+        # To check if table already exists
+        self.cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='products' ''')
+
+        row = self.cursor.fetchone()
+        print("ROW IS ", row)
+        if row[0] == 1:
+            print("products Table already exists")
+            self.cursor.execute(''' DELETE FROM products ''')
+        else:
+            self.cursor.execute("""CREATE TABLE products (
+                sku VARCHAR(254), 
+                title VARCHAR(254), 
+                price TEXT,
+                category_id VARCHAR(254),
+                category_title VARCHAR(254),
+                images TEXT,
+                description TEXT,
+                flag_status VARCHAR(254) DEFAULT 'N',
+                PRIMARY KEY (sku, category_id)
+                )""")
+            print("Successfully created products table.")
 
     def generateAuthKey(self):
         print("Generating new auth key")

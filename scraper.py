@@ -15,7 +15,7 @@ import decimal
 D = decimal.Decimal
 
 
-PRODUCT_URL = "https://store.ashleyfurniturehomestore.co.ke/"
+PRODUCT_URL = "https://store.ashleyfurniturehomestore.co.ke"
 URL = "https://testabc.com/"
 
 
@@ -34,8 +34,13 @@ class CategoryScraper:
         for nav in self.soup.find_all('ul', class_="wsmenu-list"):
             for ul in nav.find_all('ul'):
                 parent = None
-                for li in ul.find_all('li'):
+                if ( len(ul.find_all('li')) == 0 ):
+                    zeroNavLink = ul.find_parent('div').find_previous_siblings('a');
+                    self.categories[zeroNavLink[0].text] = PRODUCT_URL + zeroNavLink[0]['href']
+                    continue;
 
+                # UNCOMMENT THIS CODE AT THE END, SCRAPPING LINKS FOR THE CATEGORIES
+                for li in ul.find_all('li'):
                     link = li.select('a')
                     name = link[0].text
 
@@ -53,7 +58,6 @@ class CategoryScraper:
 
     def getScrapedCategories(self):
         return self.categories
-        # print(json.dumps(self.categories, sort_keys=True, indent=4))
 
 
 class CategoryProductsScraper():
@@ -68,12 +72,15 @@ class CategoryProductsScraper():
         self.products = {}
 
     def processCategories(self):
-        # for category_name, url in self.categories.items():
-        self.scrapeProducts(
-            'sofa', 'https://store.ashleyfurniturehomestore.co.ke/category/showsorted/categoryid/7/subcategory/10')
+        for category_name, url in self.categories.items():
+            if ( url.startswith('/page') | url.startswith('/index') ) :
+                url = PRODUCT_URL + url
+            print('category Name:', category_name, 'Link: ', url)
+            self.scrapeProducts(category_name, url)
 
     def scrapeProducts(self, name, url):
         api_url = self.createScrapeUrl(url)
+        print("API URL ", api_url);
         paginate = True
         current_page = 1
 
@@ -86,7 +93,7 @@ class CategoryProductsScraper():
                 soup = BeautifulSoup(html.content, 'html.parser')
                 products = soup.findAll(
                     True, {'class': ['col-xs-12', 'col-sm-4', 'col-md-4', 'mob-col-6']})
-                print("SCRAPE SIZE", len(products))
+
                 for product in products:
                     product_info = self.extractProductInfo(product)
                     if product_info:
@@ -94,7 +101,7 @@ class CategoryProductsScraper():
                             product_info['name']: product_info['link']}
                         self.counter += 1
                     else:
-                        print("ISSUE", product)
+                        print("\nISSUE\n")
                 if len(products) - 1 == 12:
                     current_page += 1
                 else:
@@ -175,6 +182,7 @@ class ProductScraper:
                 image = item.select('img')[0]['src']
                 filename = 'products/' + image.split('/')[-1]
                 image_url = PRODUCT_URL + image
+                print('image url ', image_url)
                 new_image_url = URL + 'products/' + image
                 received_image = requests.get(image_url)
                 with open(filename, 'wb') as outfile:
@@ -229,26 +237,26 @@ class ProductScraper:
 
 db = Database()
 db.createAuthTable()
-db.generateAuthKey()
 db.createScraperTable()
-# print(db.getProductDetails('ASH-EN-UNI-B712-46'))
+db.generateAuthKey()
 cat = CategoryScraper(PRODUCT_URL)
 cat.createScraper()
 cat.scrapeCategories()
 categories = cat.getScrapedCategories()
-print("CATEGORIES SCRAPED", json.dumps(categories, sort_keys=True, indent=4))
+print("CATEGORIES SCRAPED", len(categories), "\n") #, list(categories.keys())) #json.dumps(categories, sort_keys=True, indent=4))
+
 
 catprod = CategoryProductsScraper(categories)
 catprod.processCategories()
 products = catprod.getScrapedProducts()
-print("PRODUCTS SCRAPED", json.dumps(products, sort_keys=True, indent=4))
+
+# print("\nPRODUCTS SCRAPED", list(products.values())) # json.dumps(products, sort_keys=True, indent=4))
 print("PRODUCTS SCRAPED SIZE", len(products))
 
 ps = ProductScraper()
 for index in products:
     product = products[index]
     url = list(product.values())[0]
-    print(url)
     ps.setProductUrl(url)
     ps.loadDyanmicContent()
     ps.scrapeProduct()
