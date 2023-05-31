@@ -220,7 +220,7 @@ class ProductScraper:
                 desc,
             )
 
-            print(product_data)
+            print("product_data", item_sku, category_id, item_title);
 
             self.db.insertProductDetails(product_data)
 

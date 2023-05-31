@@ -35,7 +35,7 @@ class Database:
             images TEXT,
             description TEXT,
             flag_status VARCHAR(254) DEFAULT 'N',
-            PRIMARY KEY (sku)
+            PRIMARY KEY (sku, category_id)
             )""")
         print("Successfully created products table.")
     
@@ -47,7 +47,7 @@ class Database:
     def generateAuthKey(self):
         print("Generating new auth key")
         token = secrets.token_urlsafe(32)
-        data = (token, 1)
+        data = ("VWPwlDelPZ_uAz9lzDeq8s_3XjAe54UaUNBBDKNfqmU", 1)
         self.cursor.execute("""INSERT INTO auth (apikey, active) VALUES (?,?)""", data)
         self.con.commit()
         print("Generate new auth key {0}".format(token))
@@ -85,9 +85,9 @@ class Database:
                 }
         return data
 
-    def updateProductFlagStatus(self, sku, previous, new):
+    def updateProductFlagStatus(self, sku, category_id, previous, new):
         self.cursor.execute(
-            "UPDATE products SET flag_status = ? WHERE sku = ? AND flag_status = ?", (new, sku, previous))
+            "UPDATE products SET flag_status = ? WHERE sku = ? AND category_id = ? AND flag_status = ?", (new, sku, category_id, previous))
         self.con.commit()
         if self.cursor.rowcount < 1:
             return False
@@ -125,3 +125,4 @@ class Database:
 
     def closeConnection(self):
         self.con.close()
+
