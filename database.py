@@ -67,7 +67,7 @@ class Database:
         data = ("VWPwlDelPZ_uAz9lzDeq8s_3XjAe54UaUNBBDKNfqmU", 1)
         self.cursor.execute("""INSERT INTO auth (apikey, active) VALUES (?,?)""", data)
         self.con.commit()
-        print("Generate new auth key {0}".format(token))
+        print("Generate new auth key VWPwlDelPZ_uAz9lzDeq8s_3XjAe54UaUNBBDKNfqmU")
 
     def checkIfAuthenticated(self, apikey):
         if apikey:

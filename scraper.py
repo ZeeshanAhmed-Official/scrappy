@@ -157,7 +157,7 @@ class ProductScraper:
 
         if not self.page_source:
             print("Missing HTML body...")
-            return
+            return  
 
         soup = BeautifulSoup(self.page_source.content, 'html.parser')
         for nav in soup.find_all('div', class_="detailContainer"):
@@ -181,7 +181,11 @@ class ProductScraper:
             for item in slideshow:
                 image = item.select('img')[0]['src']
                 filename = 'products/' + image.split('/')[-1]
-                image_url = PRODUCT_URL + image
+                print("IMAGe is ", image, 'http' in image);
+                if 'http' not in image:
+                    image_url = PRODUCT_URL + image
+                else:
+                    image_url = image;
                 print('image url ', image_url)
                 new_image_url = URL + 'products/' + image
                 received_image = requests.get(image_url)
