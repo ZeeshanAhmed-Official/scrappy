@@ -140,6 +140,22 @@ class Database:
                 }
         return data
 
+    def getPlusFactorProducts(self):
+        rows = self.cursor.execute(
+            "SELECT sku, title, price, images, description, flag_status FROM products WHERE sku LIKE ?""", ("%+%")).fetchall()
+        data = {}
+        if rows:
+            for index, row in enumerate(rows):
+                data[index] = {
+                    'sku': row[0],
+                    'title': row[1],
+                    'price': row[2],
+                    'images': row[3],
+                    'description': row[4],
+                    'flag_status': row[7]
+                }
+        return data
+
     def closeConnection(self):
         self.con.close()
 

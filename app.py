@@ -23,8 +23,6 @@ def hook():
 
 
 # Provide product information given SKU
-
-
 @app.route('/api/productref/<sku>')
 def product_info(sku):
     if sku:
@@ -44,10 +42,9 @@ def product_info(sku):
         body='No Product(s) here'
     ), 202)
 
+
 # Update Y Flag for a product
-
-
-@app.route('/api/yflagupdate/<sku>')
+@app.route('/api/yflagupdate/<sku>', methods = ['POST'])
 def yflag_update(sku):
     if sku:
         db = Database()
@@ -70,10 +67,9 @@ def yflag_update(sku):
         body='No Product(s) here'
     ), 202)
 
+
 # Update N Flag for a product
-
-
-@app.route('/api/nflagupdate/<sku>')
+@app.route('/api/nflagupdate/<sku>', methods = ['POST'])
 def ynlag_update(sku):
     if sku:
         db = Database()
@@ -96,9 +92,8 @@ def ynlag_update(sku):
         body='No Product(s) here'
     ), 202)
 
+
 # Provide all products with N Flag
-
-
 @app.route('/api/nflags')
 def nflag_list():
     db = Database()
@@ -117,9 +112,8 @@ def nflag_list():
         body='No Product(s) here'
     ), 202)
 
+
 # Provide all products with Y Flag
-
-
 @app.route('/api/yflags')
 def yflag_list():
     db = Database()
@@ -140,8 +134,6 @@ def yflag_list():
 
 
 # Provide a list of Product Categories
-
-
 @app.route('/api/categorylist')
 def category_listing():
     db = Database()
@@ -158,6 +150,26 @@ def category_listing():
         success="NO",
         status_code="202 OK",
         body='No Category(ies) here'
+    ), 202)
+
+
+# Provide all products having the “+” (plus) symbol in the SKU field
+@app.route('/api/plusfactor')
+def plustfactor_products():
+    db = Database()
+    data = db.getProductDetails("+")
+    if data:
+        db.closeConnection()
+        return make_response(jsonify(
+            success="YES",
+            status_code="201 OK",
+            body=data
+        ), 200)
+
+    return make_response(jsonify(
+        success="NO",
+        status_code="202 OK",
+        body='No product(s) here'
     ), 202)
 
 
