@@ -131,27 +131,19 @@ class CategoryProductsScraper():
 
 # Product Scraper
 # Scrapes details for a single product
-
-
 class ProductScraper:
     def __init__(self):
         self.url = None
         self.page_source = None
         self.product = {}
+        self.SKUsInserted = list()
         self.db = Database()
 
     def setProductUrl(self, url):
         self.url = url
 
     def loadDyanmicContent(self):
-        # options = Options()
-        # options.headless = True
-        # driver = webdriver.Firefox(options=options)
-        # driver.get(self.url)
-        # self.page_source = driver.page_source
-
         self.page_source = requests.get(self.url)
-        # self.page_source = BeautifulSoup(html.content, 'html.parser')
 
     def scrapeProduct(self):
 
@@ -181,7 +173,7 @@ class ProductScraper:
             for item in slideshow:
                 image = item.select('img')[0]['src']
                 filename = 'products/' + image.split('/')[-1]
-                print("IMAGe is ", image, 'http' in image);
+
                 if 'http' not in image:
                     image_url = PRODUCT_URL + image
                 else:
@@ -212,16 +204,6 @@ class ProductScraper:
                 category_id = category[-1]['href'].split('/')[-1]
                 category_title = category[-1].text
 
-            # set_items = ''
-            # complete_set = nav.find(True, {'id': 'ctsCustom'})
-            # complete_set = complete_set.find_all(
-            #     'div', attrs={'class': 'gridPImg'})
-            # if complete_set:
-            #     for item in complete_set:
-            #         link = item.select('a')[0]['href']
-            #         #title = item.select('img')[0]['alt']
-            #         set_items += link + "\n"
-
             product_data = (
                 item_sku,
                 item_title,
@@ -232,9 +214,14 @@ class ProductScraper:
                 desc,
             )
 
+            compositeKey = item_sku+"_"+item_title
             print("product_data", item_sku, category_id, item_title);
-
-            self.db.insertProductDetails(product_data)
+            if self.SKUsInserted[compositeKey] :
+                print("skipping this product, already added")
+            else :
+                self.db.insertProductDetails(product_data)
+            
+            print("\n")
 
         # self.db.closeConnection()
 
