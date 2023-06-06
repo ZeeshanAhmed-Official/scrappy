@@ -216,11 +216,11 @@ class ProductScraper:
 
             compositeKey = item_sku+"_"+item_title
             print("product_data", item_sku, category_id, item_title);
-            if self.SKUsInserted[compositeKey] :
+            if compositeKey in self.SKUsInserted :
                 print("skipping this product, already added")
             else :
                 self.db.insertProductDetails(product_data)
-                self.SKUsInserted[compositeKey] = True
+                self.SKUsInserted.append(compositeKey)
             
             print("\n")
 
