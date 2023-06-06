@@ -3,6 +3,7 @@ from flask import jsonify, make_response
 from database import Database
 
 app = Flask(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 # Check for Authorization via API KEY
 @app.before_request
