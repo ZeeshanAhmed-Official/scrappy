@@ -116,6 +116,11 @@ def ynlag_update(sku):
 # Provide all products with N Flag
 @app.route('/api/nflags')
 def nflag_list():
+    return make_response(jsonify(
+            success="YES",
+            status_code="201 OK",
+            body="HELLO"
+        ), 200)
     db = Database()
     data = db.getFlagStatusProducts('N')
     if data:
