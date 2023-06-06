@@ -220,6 +220,7 @@ class ProductScraper:
                 print("skipping this product, already added")
             else :
                 self.db.insertProductDetails(product_data)
+                self.SKUsInserted[compositeKey] = True
             
             print("\n")
 
