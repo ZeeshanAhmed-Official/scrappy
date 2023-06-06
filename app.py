@@ -22,6 +22,26 @@ def hook():
         ), 401)
 
 
+# Provide all products having the “+” (plus) symbol in the SKU field
+@app.route('/api/plusfactor/')
+def plus_factor():
+    db = Database()
+    data = db.getProductDetails("+")
+    if data:
+        db.closeConnection()
+        return make_response(jsonify(
+            success="YES",
+            status_code="201 OK",
+            body=data
+        ), 200)
+
+    return make_response(jsonify(
+        success="NO",
+        status_code="202 OK",
+        body='No product(s) here'
+    ), 202)
+
+
 # Provide product information given SKU
 @app.route('/api/productref/<sku>')
 def product_info(sku):
@@ -152,25 +172,6 @@ def category_listing():
         body='No Category(ies) here'
     ), 202)
 
-
-# Provide all products having the “+” (plus) symbol in the SKU field
-@app.route('/api/plusfactor')
-def plustfactor_products():
-    db = Database()
-    data = db.getProductDetails("+")
-    if data:
-        db.closeConnection()
-        return make_response(jsonify(
-            success="YES",
-            status_code="201 OK",
-            body=data
-        ), 200)
-
-    return make_response(jsonify(
-        success="NO",
-        status_code="202 OK",
-        body='No product(s) here'
-    ), 202)
 
 
 if __name__ == "__main__":
