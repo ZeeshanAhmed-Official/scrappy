@@ -47,10 +47,11 @@ def product_info(sku):
 # Update Y Flag for a product
 @app.route('/api/yflagupdate/<sku>', methods = ['POST'])
 def yflag_update(sku):
+    category_id = request.args.get('category_id')
     if sku:
         db = Database()
-	category_id = request.args.get('category_id')
         updated = db.updateProductFlagStatus(sku, category_id, 'N', 'Y')
+
         if updated:
             db.closeConnection()
             return make_response(jsonify(
@@ -72,9 +73,9 @@ def yflag_update(sku):
 # Update N Flag for a product
 @app.route('/api/nflagupdate/<sku>', methods = ['POST'])
 def ynlag_update(sku):
+    category_id = request.args.get('category_id')
     if sku:
         db = Database()
-	category_id = request.args.get('category_id')
         updated = db.updateProductFlagStatus(sku, category_id, 'Y', 'N')
         if updated:
             db.closeConnection()
