@@ -81,7 +81,6 @@ class CategoryProductsScraper():
 
     def scrapeProducts(self, name, url):
         api_url = self.createScrapeUrl(url)
-        print("API URL ", api_url);
         paginate = True
         current_page = 1
 
@@ -223,7 +222,7 @@ class ProductScraper:
                 desc,
             )
 
-            compositeKey = item_sku+"_"+item_title
+            compositeKey = item_sku+"_"+item_title.lower().replace(" ", "_")
             print("product_data", item_sku, category_id, item_title, compositeKey, json.dumps(self.SKUsInserted, sort_keys=True, indent=4))
             if compositeKey in self.SKUsInserted :
                 print("skipping this product, already added")
@@ -252,7 +251,7 @@ catprod.processCategories()
 products = catprod.getScrapedProducts()
 
 # print("\nPRODUCTS SCRAPED", list(products.values())) # json.dumps(products, sort_keys=True, indent=4))
-print("PRODUCTS SCRAPED SIZE", len(products))
+print("PRODUCTS SCRAPED SIZE", len(products), json.dumps(products, sort_keys=True, indent=4))
 
 ps = ProductScraper()
 for index in products:
