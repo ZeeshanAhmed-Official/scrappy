@@ -140,6 +140,15 @@ class ProductScraper:
         self.SKUsInserted = list()
         self.db = Database()
 
+        # Checking whether the specified path exists
+        isExisting = os.path.exists('products/')
+        print("Directory Exists ", isExisting)
+        if isExisting: 
+            shutil.rmtree('products/')
+        # MAKE New directory named products
+        os.mkdir('products/')
+        print("Directory Created ", os.path.exists('products/'))
+
     def setProductUrl(self, url):
         self.url = url
 
@@ -147,15 +156,6 @@ class ProductScraper:
         self.page_source = requests.get(self.url)
 
     def scrapeProduct(self):
-
-        # Checking whether the specified path exists
-        isExisting = os.path.exists('products/')
-        print("Directory Exists ", isExisting)
-        if isExisting: 
-            shutil.rmtree('products/')
-
-        os.mkdir('products/')
-        print("Directory Created ", os.path.exists('products/'))
         if not self.page_source:
             print("Missing HTML body...")
             return  
