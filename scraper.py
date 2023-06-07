@@ -224,7 +224,7 @@ class ProductScraper:
             )
 
             compositeKey = item_sku+"_"+item_title
-            print("product_data", item_sku, category_id, item_title);
+            print("product_data", item_sku, category_id, item_title, compositeKey, json.dumps(SKUsInserted, sort_keys=True, indent=4))
             if compositeKey in self.SKUsInserted :
                 print("skipping this product, already added")
             else :
@@ -256,6 +256,7 @@ print("PRODUCTS SCRAPED SIZE", len(products))
 
 ps = ProductScraper()
 for index in products:
+    print("adding product number ", index);
     product = products[index]
     url = list(product.values())[0]
     ps.setProductUrl(url)
