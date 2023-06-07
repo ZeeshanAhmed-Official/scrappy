@@ -224,7 +224,7 @@ class ProductScraper:
             )
 
             compositeKey = item_sku+"_"+item_title
-            print("product_data", item_sku, category_id, item_title, compositeKey, json.dumps(SKUsInserted, sort_keys=True, indent=4))
+            print("product_data", item_sku, category_id, item_title, compositeKey, json.dumps(self.SKUsInserted, sort_keys=True, indent=4))
             if compositeKey in self.SKUsInserted :
                 print("skipping this product, already added")
             else :
