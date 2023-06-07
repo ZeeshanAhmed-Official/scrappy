@@ -11,6 +11,7 @@ from urllib.parse import parse_qs
 from bs4 import BeautifulSoup
 from database import Database
 import decimal
+import shutil
 
 D = decimal.Decimal
 
@@ -147,6 +148,14 @@ class ProductScraper:
 
     def scrapeProduct(self):
 
+        # Checking whether the specified path exists
+        isExisting = os.path.exists('products/')
+        print("Directory Exists ", isExisting)
+        if isExisting: 
+            shutil.rmtree('products/')
+
+        os.mkdir('products/')
+        print("Directory Created ", os.path.exists('products/'))
         if not self.page_source:
             print("Missing HTML body...")
             return  
@@ -226,7 +235,7 @@ class ProductScraper:
 
         # self.db.closeConnection()
 
-
+# RUNNING SCRIPTS FROM HERE
 db = Database()
 db.createAuthTable()
 db.createScraperTable()
