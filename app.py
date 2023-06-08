@@ -47,7 +47,7 @@ def product_info(sku):
 # Update Y Flag for a product
 @app.route('/api/yflagupdate/<sku>', methods = ['POST'])
 def yflag_update(sku):
-    category_id = request.args.get('category_id')
+    # category_id = request.args.get('category_id')
     if sku:
         db = Database()
         updated = db.updateProductFlagStatus(sku, 'N', 'Y')
@@ -73,7 +73,7 @@ def yflag_update(sku):
 # Update N Flag for a product
 @app.route('/api/nflagupdate/<sku>', methods = ['POST'])
 def ynlag_update(sku):
-    category_id = request.args.get('category_id')
+    # category_id = request.args.get('category_id')
     if sku:
         db = Database()
         updated = db.updateProductFlagStatus(sku, 'Y', 'N')
