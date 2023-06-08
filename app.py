@@ -50,7 +50,7 @@ def yflag_update(sku):
     category_id = request.args.get('category_id')
     if sku:
         db = Database()
-        updated = db.updateProductFlagStatus(sku, category_id, 'N', 'Y')
+        updated = db.updateProductFlagStatus(sku, 'N', 'Y')
 
         if updated:
             db.closeConnection()
@@ -76,7 +76,7 @@ def ynlag_update(sku):
     category_id = request.args.get('category_id')
     if sku:
         db = Database()
-        updated = db.updateProductFlagStatus(sku, category_id, 'Y', 'N')
+        updated = db.updateProductFlagStatus(sku, 'Y', 'N')
         if updated:
             db.closeConnection()
             return make_response(jsonify(

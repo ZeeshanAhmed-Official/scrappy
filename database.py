@@ -102,9 +102,9 @@ class Database:
                 }
         return data
 
-    def updateProductFlagStatus(self, sku, category_id, previous, new):
+    def updateProductFlagStatus(self, sku, previous, new):
         self.cursor.execute(
-            "UPDATE products SET flag_status = ? WHERE sku = ? AND category_id = ? AND flag_status = ?", (new, sku, category_id, previous))
+            "UPDATE products SET flag_status = ? WHERE sku = ? AND flag_status = ?", (new, sku, previous))
         self.con.commit()
         if self.cursor.rowcount < 1:
             return False
