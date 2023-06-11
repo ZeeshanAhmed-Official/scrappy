@@ -4,6 +4,7 @@ from database import Database
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config["CACHE_TYPE"] = "null"
 
 # Check for Authorization via API KEY
 @app.before_request
@@ -44,34 +45,7 @@ def product_info(sku):
     ), 202)
 
 
-# Update Y Flag for a product
-@app.route('/api/yflagupdate/<sku>', methods = ['POST'])
-def yflag_update(sku):
-    return make_response(jsonify(
-        success="Bosnia",
-        status_code="202 OK",
-        body='Marwa le here'
-    ), 202)
-    if sku:
-        db = Database()
-        updated = db.updateProductFlagStatus(sku, 'N', 'Y')
 
-        if updated:
-            db.closeConnection()
-            return make_response(jsonify(
-                success="YES",
-                status_code="201 OK",
-                body={
-                    'sku': sku,
-                    'FLAG_STATUS': 'Y'
-                }
-            ), 200)
-
-    return make_response(jsonify(
-        success="NO",
-        status_code="202 OK",
-        body='No Product(s) here'
-    ), 202)
 
 
 # Update N Flag for a product
