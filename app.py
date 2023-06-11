@@ -51,7 +51,11 @@ def yflag_update(sku):
     if sku:
         db = Database()
         updated = db.updateProductFlagStatus(sku, 'N', 'Y')
-        return updated
+        return make_response(jsonify(
+            success=updated,
+            status_code="202 OK",
+            body='No Product(s) here'
+        ), 202)
         if updated:
             db.closeConnection()
             return make_response(jsonify(
