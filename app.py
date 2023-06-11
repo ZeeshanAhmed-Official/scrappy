@@ -47,7 +47,11 @@ def product_info(sku):
 # Update Y Flag for a product
 @app.route('/api/yflagupdate/<sku>', methods = ['POST'])
 def yflag_update(sku):
-    # category_id = request.args.get('category_id')
+    return make_response(jsonify(
+        success="Bosnia",
+        status_code="202 OK",
+        body='Marwa le here'
+    ), 202)
     if sku:
         db = Database()
         updated = db.updateProductFlagStatus(sku, 'N', 'Y')
