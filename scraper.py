@@ -17,7 +17,7 @@ D = decimal.Decimal
 
 
 PRODUCT_URL = "https://store.ashleyfurniturehomestore.co.ke"
-URL = "https://testabc.com/"
+# URL = "https://testabc.com/"
 
 
 class CategoryScraper:
@@ -36,9 +36,9 @@ class CategoryScraper:
             for ul in nav.find_all('ul'):
                 parent = None
                 if ( len(ul.find_all('li')) == 0 ):
-                    zeroNavLink = ul.find_parent('div').find_previous_siblings('a');
+                    zeroNavLink = ul.find_parent('div').find_previous_siblings('a')
                     self.categories[zeroNavLink[0].text] = PRODUCT_URL + zeroNavLink[0]['href']
-                    continue;
+                    continue
 
                 # UNCOMMENT THIS CODE AT THE END, SCRAPPING LINKS FOR THE CATEGORIES
                 for li in ul.find_all('li'):
@@ -76,7 +76,7 @@ class CategoryProductsScraper():
         for category_name, url in self.categories.items():
             if ( url.startswith('/page') | url.startswith('/index') ) :
                 url = PRODUCT_URL + url
-            print('category Name:', category_name, 'Link: ', url)
+            # print('category Name:', category_name, 'Link: ', url)
             self.scrapeProducts(category_name, url)
 
     def scrapeProducts(self, name, url):
@@ -88,7 +88,7 @@ class CategoryProductsScraper():
             while paginate:
                 category_url = "{}&pagenumber={}&ajax=1&sortby=1".format(
                     api_url, current_page)
-                print("SCRAPING URL", category_url)
+                # print("SCRAPING URL", category_url)
                 html = requests.get(category_url)
                 soup = BeautifulSoup(html.content, 'html.parser')
                 products = soup.findAll(
@@ -100,8 +100,8 @@ class CategoryProductsScraper():
                         self.products[self.counter] = {
                             product_info['name']: product_info['link']}
                         self.counter += 1
-                    else:
-                        print("\nISSUE\n")
+                    # else:
+                        # print("\nISSUE\n")
                 if len(products) - 1 == 12:
                     current_page += 1
                 else:
@@ -176,22 +176,24 @@ class ProductScraper:
 
             # Product Images
             images = ''
-            slideshow = nav.find(
-                True, {'class': 'ProDtlImg'}).select('ul > li')
+            slideshow = nav.find(True, {'class': 'ProDtlImg'}).select('ul > li')
             for item in slideshow:
                 image = item.select('img')[0]['src']
                 filename = 'products/' + image.split('/')[-1]
 
+                image_url = image
                 if 'http' not in image:
                     image_url = PRODUCT_URL + image
-                else:
-                    image_url = image;
-                print('image url ', image_url)
-                new_image_url = URL + 'products/' + image
+                
+                new_image_url = image_url + 'products/' + image
+
+                print("Image URL : ", image_url)
+                # print("New Image URL : ", new_image_url)
+
                 received_image = requests.get(image_url)
                 with open(filename, 'wb') as outfile:
                     outfile.write(received_image.content)
-                images += new_image_url + "\n"
+                images += image_url + "\n"
 
             desc = ''
             divs = nav.find(True, {'class': 'ProDesc'}).select('div')
@@ -221,6 +223,7 @@ class ProductScraper:
                 images,
                 desc,
             )
+            print("Images are ", images)
 
             compositeKey = item_sku+"_"+item_title.lower().replace(" ", "_")
             print("product_data", item_sku, category_id, item_title, compositeKey, json.dumps(self.SKUsInserted, sort_keys=True, indent=4))
@@ -243,15 +246,18 @@ cat = CategoryScraper(PRODUCT_URL)
 cat.createScraper()
 cat.scrapeCategories()
 categories = cat.getScrapedCategories()
-print("CATEGORIES SCRAPED", len(categories), "\n") #, list(categories.keys())) #json.dumps(categories, sort_keys=True, indent=4))
+print("CATEGORIES SCRAPED", len(categories), "\n") # , list(categories.keys())) #json.dumps(categories, sort_keys=True, indent=4))
 
-
+# categories = {'Sectional Sofas': 'https://store.ashleyfurniturehomestore.co.ke/category/showsorted/categoryid/7/subcategory/12', 'Sleeper Sofas': 'https://store.ashleyfurniturehomestore.co.ke/category/showsorted/categoryid/7/subcategory/13'}
+# categories = {'Sectional Sofas': 'https://store.ashleyfurniturehomestore.co.ke/category/showsorted/categoryid/7/subcategory/12'}
+# print(categories)
 catprod = CategoryProductsScraper(categories)
 catprod.processCategories()
 products = catprod.getScrapedProducts()
+# products = {1: {'Black/Gray Bardarson 5-Piece Sectional with Chaise': 'https://store.ashleyfurniturehomestore.co.ke//category/living-room/black-gray-bardarson-5-piece-sectional-with-chaise194.html'}, 2: {'Dellara 4-Piece Sectional with Chaise': 'https://store.ashleyfurniturehomestore.co.ke//category/living-room/dellara-4-piece-sectional-with-chaise.html'}}
 
 # print("\nPRODUCTS SCRAPED", list(products.values())) # json.dumps(products, sort_keys=True, indent=4))
-print("PRODUCTS SCRAPED SIZE", len(products), json.dumps(products, sort_keys=True, indent=4))
+print("\nPRODUCTS SCRAPED SIZE", len(products)) #, products) # json.dumps(products, sort_keys=True, indent=4))
 
 ps = ProductScraper()
 for index in products:
