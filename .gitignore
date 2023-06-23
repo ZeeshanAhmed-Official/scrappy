@@ -1,5 +1,6 @@
 scraper.db
 59-scraper.db
-products/
+static/
 __pycache__/
+__pycache__/*
 scraperold.db

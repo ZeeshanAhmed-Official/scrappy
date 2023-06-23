@@ -17,6 +17,7 @@ D = decimal.Decimal
 
 
 PRODUCT_URL = "https://store.ashleyfurniturehomestore.co.ke"
+IMAGE_PATH = "static/images/products/";
 # URL = "https://testabc.com/"
 
 
@@ -140,13 +141,13 @@ class ProductScraper:
         self.db = Database()
 
         # Checking whether the specified path exists
-        isExisting = os.path.exists('products/')
+        isExisting = os.path.exists(IMAGE_PATH)
         print("Directory Exists ", isExisting)
         if isExisting: 
-            shutil.rmtree('products/')
+            shutil.rmtree(IMAGE_PATH)
         # MAKE New directory named products
-        os.mkdir('products/')
-        print("Directory Created ", os.path.exists('products/'))
+        os.mkdir(IMAGE_PATH)
+        print("Directory Created ", os.path.exists(IMAGE_PATH))
 
     def setProductUrl(self, url):
         self.url = url
@@ -179,13 +180,13 @@ class ProductScraper:
             slideshow = nav.find(True, {'class': 'ProDtlImg'}).select('ul > li')
             for item in slideshow:
                 image = item.select('img')[0]['src']
-                filename = 'products/' + image.split('/')[-1]
+                filename = IMAGE_PATH + image.split('/')[-1]
 
                 image_url = image
                 if 'http' not in image:
                     image_url = PRODUCT_URL + image
                 
-                new_image_url = image_url + 'products/' + image
+                new_image_url = image_url + IMAGE_PATH + image
 
                 print("Image URL : ", image_url)
                 # print("New Image URL : ", new_image_url)

@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask import jsonify, make_response
 from database import Database
 
@@ -9,19 +9,21 @@ app.config["CACHE_TYPE"] = "null"
 # Check for Authorization via API KEY
 @app.before_request
 def hook():
-    if 'apikey' in request.headers:
-        apikey = request.headers.get('apikey')
-        db = Database()
-        if not db.checkIfAuthenticated(apikey):
+    print(request.endpoint)
+    if request.endpoint != "get_image":
+        if 'apikey' in request.headers:
+            apikey = request.headers.get('apikey')
+            db = Database()
+            if not db.checkIfAuthenticated(apikey):
+                return make_response(jsonify(
+                    success="NO",
+                    status_code="401 Unauthorized",
+                ), 401)
+        else:
             return make_response(jsonify(
                 success="NO",
                 status_code="401 Unauthorized",
             ), 401)
-    else:
-        return make_response(jsonify(
-            success="NO",
-            status_code="401 Unauthorized",
-        ), 401)
 
 
 # Provide product information given SKU
@@ -173,6 +175,11 @@ def plusfactor_products():
         status_code="202 OK",
         body='No product(s) here'
     ), 202)
+
+# Display image route
+@app.route('/products/<path:filename>')
+def get_image(filename):
+    return send_from_directory('static/images/products/', filename)
 
 
 if __name__ == "__main__":
